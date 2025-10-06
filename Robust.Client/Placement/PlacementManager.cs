@@ -112,7 +112,7 @@ namespace Robust.Client.Placement
         /// <summary>
         /// Holds the selection rectangle for the eraser
         /// </summary>
-        public Box2? EraserRect { get; set; }
+        public Box2Rotated? EraserRect { get; set; }
 
         /// <summary>
         /// Drawing shader for drawing without being affected by lighting
@@ -483,12 +483,12 @@ namespace Robust.Client.Placement
             _networkManager.ClientSendMessage(msg);
         }
 
-        public void HandleRectDeletion(EntityCoordinates start, Box2 rect)
+        public void HandleRectDeletion(EntityCoordinates start, Box2Rotated rect)
         {
             var msg = new MsgPlacement();
             msg.PlaceType = PlacementManagerMessage.RequestRectRemove;
             msg.NetCoordinates = new NetCoordinates(EntityManager.GetNetEntity(StartPoint.EntityId), rect.BottomLeft);
-            msg.RectSize = rect.Size;
+            msg.RectSize = rect.Box.Size;
             _networkManager.ClientSendMessage(msg);
         }
 
@@ -565,12 +565,13 @@ namespace Robust.Client.Placement
             return coordinates.IsValid;
         }
 
-        private bool CurrentEraserMouseCoordinates(out EntityCoordinates coordinates)
+        private bool CurrentEraserMouseCoordinates(out EntityCoordinates coordinates, out Angle rotation)
         {
             var ent = PlayerManager.LocalEntity ?? EntityUid.Invalid;
             if (ent == EntityUid.Invalid)
             {
                 coordinates = new EntityCoordinates();
+                rotation = Angle.Zero;
                 return false;
             }
             else
@@ -580,9 +581,11 @@ namespace Robust.Client.Placement
                 if (map == MapId.Nullspace || !Eraser || mousePosition.MapId == MapId.Nullspace)
                 {
                     coordinates = new EntityCoordinates();
+                    rotation = Angle.Zero;
                     return false;
                 }
                 coordinates = XformSystem.ToCoordinates(mousePosition);
+                rotation = XformSystem.GetWorldRotation(ent);
                 return true;
             }
         }
@@ -594,7 +597,7 @@ namespace Robust.Client.Placement
             {
                 if (EraserRect.HasValue)
                 {
-                    if (!CurrentEraserMouseCoordinates(out EntityCoordinates end))
+                    if (!CurrentEraserMouseCoordinates(out EntityCoordinates end, out _))
                         return;
                     float b, l, t, r;
                     if (StartPoint.X < end.X)
@@ -617,7 +620,8 @@ namespace Robust.Client.Placement
                         b = end.Y;
                         t = StartPoint.Y;
                     }
-                    EraserRect = new Box2(l, b, r, t);
+                    var eraserRectAxisAligned = new Box2(l, b, r, t);
+                    EraserRect = new Box2Rotated(eraserRectAxisAligned, EraserRect.Value.Rotation);
                 }
                 return;
             }
@@ -662,11 +666,12 @@ namespace Robust.Client.Placement
 
         private void EraseRectMode()
         {
-            if (!CurrentEraserMouseCoordinates(out EntityCoordinates coordinates))
+            if (!CurrentEraserMouseCoordinates(out EntityCoordinates coordinates, out var rotation))
                 return;
 
             StartPoint = coordinates;
-            EraserRect = new Box2(coordinates.Position, Vector2.Zero);
+            var eraserRectAxisAligned = new Box2(coordinates.Position, Vector2.Zero);
+            EraserRect = new Box2Rotated(eraserRectAxisAligned, rotation);
         }
 
         private bool DeactivateSpecialPlacement()
