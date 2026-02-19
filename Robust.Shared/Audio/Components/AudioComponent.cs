@@ -144,6 +144,7 @@ public sealed partial class AudioComponent : Component, IAudioSource
     /// <summary>
     /// <see cref="IAudioSource.Pitch"/>
     /// </summary>
+    [Access(Other = AccessPermissions.ReadWriteExecute)]
     public float Pitch
     {
         get => Source.Pitch;
