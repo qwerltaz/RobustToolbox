@@ -218,6 +218,9 @@ public sealed partial class AudioSystem : SharedAudioSystem
     [SubscribeLocalEvent]
     private void OnAudioStartup(EntityUid uid, AudioComponent component, ComponentStartup args)
     {
+        var ev = new AudioStartupEvent((uid, component));
+        RaiseLocalEvent(ref ev);
+
         if (!Timing.ApplyingState && !Timing.IsFirstTimePredicted)
         {
             return;

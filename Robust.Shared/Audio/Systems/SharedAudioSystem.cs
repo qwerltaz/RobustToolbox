@@ -772,3 +772,7 @@ public abstract partial class SharedAudioSystem : EntitySystem
         audioComponent.Params = newAudioParams;
     }
 }
+
+
+[ByRefEvent]
+public record struct AudioStartupEvent(Entity<AudioComponent> Ent);
