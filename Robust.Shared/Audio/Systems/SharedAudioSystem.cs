@@ -766,11 +766,6 @@ public abstract partial class SharedAudioSystem : EntitySystem
 
         return component.State == AudioState.Playing;
     }
-
-    public void SetAudioParams(AudioComponent audioComponent, AudioParams newAudioParams)
-    {
-        audioComponent.Params = newAudioParams;
-    }
 }
 
 

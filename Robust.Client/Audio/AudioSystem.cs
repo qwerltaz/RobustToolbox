@@ -315,6 +315,12 @@ public sealed partial class AudioSystem : SharedAudioSystem
         _maxRayLength = value;
     }
 
+    public void SetAudioParams(AudioComponent audioComponent, AudioParams newAudioParams)
+    {
+        audioComponent.Params = newAudioParams;
+        ApplyAudioParams(newAudioParams, audioComponent);
+    }
+
     public override void FrameUpdate(float frameTime)
     {
         _audioFrameTimeRemaining -= frameTime;
