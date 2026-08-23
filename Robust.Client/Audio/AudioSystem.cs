@@ -8,6 +8,7 @@ using Robust.Client.Graphics;
 using Robust.Client.Player;
 using Robust.Client.ResourceManagement;
 using Robust.Shared;
+using Robust.Shared.Analyzers;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Components;
 using Robust.Shared.Audio.Sources;
@@ -218,9 +219,6 @@ public sealed partial class AudioSystem : SharedAudioSystem
     [SubscribeLocalEvent]
     private void OnAudioStartup(EntityUid uid, AudioComponent component, ComponentStartup args)
     {
-        var ev = new AudioStartupEvent((uid, component));
-        RaiseLocalEvent(ref ev);
-
         if (!Timing.ApplyingState && !Timing.IsFirstTimePredicted)
         {
             return;
@@ -288,6 +286,9 @@ public sealed partial class AudioSystem : SharedAudioSystem
         {
             component.PlaybackPosition = offset;
         }
+
+        var ev = new AudioStartupEvent(entity);
+        RaiseLocalEvent(ref ev);
     }
 
     [SubscribeLocalEvent]
