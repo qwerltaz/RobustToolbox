@@ -200,7 +200,7 @@ namespace Robust.Shared.GameObjects
 
             foreach (var session in filter.Recipients)
             {
-                EntityManager.EntityNetManager?.SendSystemNetworkMessage(message, session.Channel);
+                EntityManager.EntityNetManager?.SendSystemNetworkMessage(message, session.Channel, recordReplay);
             }
         }
 

@@ -20,12 +20,14 @@ namespace Robust.Shared.Network.Messages
         public EntityEventArgs SystemMessage { get; set; }
         public uint Sequence { get; set; }
         public GameTick SourceTick { get; set; }
+        public bool RecordReplay { get; set; }
 
         public override void ReadFromBuffer(NetIncomingMessage buffer, IRobustSerializer serializer)
         {
             Type = (EntityMessageType)buffer.ReadByte();
             SourceTick = buffer.ReadGameTick();
             Sequence = buffer.ReadUInt32();
+            RecordReplay = buffer.ReadBoolean();
 
             switch (Type)
             {
@@ -45,6 +47,7 @@ namespace Robust.Shared.Network.Messages
             buffer.Write((byte)Type);
             buffer.Write(SourceTick);
             buffer.Write(Sequence);
+            buffer.Write(RecordReplay);
 
             switch (Type)
             {

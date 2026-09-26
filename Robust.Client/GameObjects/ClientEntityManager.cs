@@ -294,6 +294,12 @@ namespace Robust.Client.GameObjects
             throw new NotSupportedException();
         }
 
+        /// <inheritdoc />
+        public void SendSystemNetworkMessage(EntityEventArgs message, INetChannel channel, bool recordReplay)
+        {
+            throw new NotSupportedException();
+        }
+
         private void HandleEntityNetworkMessage(MsgEntity message)
         {
             if (message.SourceTick <= _gameTiming.LastRealTick)
@@ -317,7 +323,8 @@ namespace Robust.Client.GameObjects
                     // TODO REPLAYS handle late messages.
                     // If a message was received late, it will be recorded late here.
                     // Maybe process the replay to prevent late messages when playing back?
-                    _replayRecording.RecordReplayMessage(message.SystemMessage);
+                    if (message.RecordReplay)
+                        _replayRecording.RecordReplayMessage(message.SystemMessage);
 
                     DispatchReceivedNetworkMsg(message.SystemMessage);
                     return;

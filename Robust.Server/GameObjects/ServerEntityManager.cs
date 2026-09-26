@@ -197,6 +197,7 @@ namespace Robust.Server.GameObjects
             newMsg.Type = EntityMessageType.SystemMessage;
             newMsg.SystemMessage = message;
             newMsg.SourceTick = _gameTiming.CurTick;
+            newMsg.RecordReplay = recordReplay;
 
             if (recordReplay)
                 _replay.RecordServerMessage(message);
@@ -206,11 +207,16 @@ namespace Robust.Server.GameObjects
 
         /// <inheritdoc />
         public void SendSystemNetworkMessage(EntityEventArgs message, INetChannel targetConnection)
+            => SendSystemNetworkMessage(message, targetConnection, false);
+
+        /// <inheritdoc />
+        public void SendSystemNetworkMessage(EntityEventArgs message, INetChannel targetConnection, bool recordReplay)
         {
             var newMsg = new MsgEntity();
             newMsg.Type = EntityMessageType.SystemMessage;
             newMsg.SystemMessage = message;
             newMsg.SourceTick = _gameTiming.CurTick;
+            newMsg.RecordReplay = recordReplay;
 
             _networkManager.ServerSendMessage(newMsg, targetConnection);
         }

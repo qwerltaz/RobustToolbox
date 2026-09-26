@@ -44,5 +44,16 @@ namespace Robust.Shared.GameObjects
         ///    Thrown if called on the client.
         /// </exception>
         void SendSystemNetworkMessage(EntityEventArgs message, INetChannel channel);
+
+        /// <summary>
+        /// Sends an Entity System Message to a client and specifies whether it should be saved to replays.
+        /// </summary>
+        /// <param name="message">Message that should be sent.</param>
+        /// <param name="channel">The client to send the message to.</param>
+        /// <param name="recordReplay">Whether or not this message should be saved to replays.</param>
+        /// <exception cref="NotSupportedException">
+        ///    Thrown if called on the client.
+        /// </exception>
+        void SendSystemNetworkMessage(EntityEventArgs message, INetChannel channel, bool recordReplay);
     }
 }
